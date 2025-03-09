@@ -1,0 +1,56 @@
+@primary-color-dark: #333; // Color para los bordes
+@breaks: {
+  tablet: 768px;
+  desktop: 1024px;
+  wide: 1440px;
+};
+
+@breaks-prefix: {
+  tablet: "-md";
+  desktop: "-lg";
+  wide: "-xl";
+};
+
+// Mixin para generar columnas dinámicamente
+.generarColumns(@prefijo, @columnas, @iteracion: 1)
+  when
+  (@iteracion =< @columnas) {
+  .col@{prefijo}-@{iteracion} {
+    flex: 0 0 (@iteracion * 100% / @columnas);
+    max-width: (@iteracion * 100% / @columnas);
+  }
+  .generarColumns(@prefijo, @columnas, (@iteracion + 1));
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; // Espaciado entre filas
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+
+  [class*="col-"] {
+    border: 1px solid @primary-color-dark;
+    padding: 10px;
+    text-align: center;
+    background-color: #f5f5f5;
+  }
+
+  .generarColumns("", 6); // 6 columnas en móvil
+
+  @media (min-width: @breaks[tablet]) {
+    .generarColumns(@breaks-prefix[tablet], 12); // 12 columnas en tablet
+  }
+
+  @media (min-width: @breaks[desktop]) {
+    .generarColumns(@breaks-prefix[desktop], 12); // 12 columnas en desktop
+  }
+
+  @media (min-width: @breaks[wide]) {
+    .generarColumns(@breaks-prefix[wide], 12); // 12 columnas en pantallas grandes
+  }
+}
